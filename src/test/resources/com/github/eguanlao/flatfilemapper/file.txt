@@ -1,4 +1,4 @@
 H20191219
-1     john@gmail.com                19700101
-2     jane@yahoo.com                19811231
+1     john@gmail.com                19700101   1   1     1true AJohn                Doe                           
+2     jane@yahoo.com                19811231   2   2     2falseBJane                Doe                           
 T2     

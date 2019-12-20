@@ -1,6 +1,8 @@
 package com.github.eguanlao.flatfilemapper;
 
+import com.github.eguanlao.flatfilemapper.handlers.Handler;
 import lombok.Builder;
+import lombok.Singular;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
@@ -13,12 +15,21 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 public class FlatFileMapper {
 
     private Class<?> headerType;
     private Class<?> recordType;
     private Class<?> trailerType;
+
+    private ObjectFactory objectFactory;
+
+    @Builder
+    public FlatFileMapper(Class<?> headerType, Class<?> recordType, Class<?> trailerType, @Singular List<Class<? extends Handler<?>>> handlers) {
+        this.headerType = headerType;
+        this.recordType = recordType;
+        this.trailerType = trailerType;
+        this.objectFactory = new ObjectFactory(handlers);
+    }
 
     public Object[] map(Reader reader) throws IOException {
         try (LineIterator lineIterator = IOUtils.lineIterator(reader)) {
@@ -59,14 +70,14 @@ public class FlatFileMapper {
             String line = lineIterator.nextLine();
 
             if (isHeader(line)) {
-                header = ObjectFactory.create(headerType, line);
+                header = objectFactory.create(headerType, line);
             }
             if (isRecord(line)) {
-                Object record = ObjectFactory.create(recordType, line);
+                Object record = objectFactory.create(recordType, line);
                 records.add(record);
             }
             if (isTrailer(line)) {
-                trailer = ObjectFactory.create(trailerType, line);
+                trailer = objectFactory.create(trailerType, line);
             }
         }
 

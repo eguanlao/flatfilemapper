@@ -18,18 +18,20 @@ public class FlatFileMapperTest {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Test
-    public void should() throws IOException {
+    public void shouldMapSimpleFlatFileSuccessfully() throws IOException {
         // Given
         FlatFileMapper flatFileMapper = FlatFileMapper.builder()
                 .headerType(Header.class)
                 .recordType(Account.class)
                 .trailerType(Trailer.class)
+                .handler(FirstNameHandler.class)
+                .handler(LastNameHandler.class)
                 .build();
 
         Header expectedHeader = new Header("H", LocalDate.parse("20191219", dateTimeFormatter));
         List<Account> expectedAccounts = Arrays.asList(
-                new Account(1, "john@gmail.com", LocalDate.parse("19700101", dateTimeFormatter)),
-                new Account(2, "jane@yahoo.com", LocalDate.parse("19811231", dateTimeFormatter))
+                new Account(1, "john@gmail.com", LocalDate.parse("19700101", dateTimeFormatter), 1, 1, 1L, true, null, 0, AccountType.A, new FirstName("John"), new LastName("Doe")),
+                new Account(2, "jane@yahoo.com", LocalDate.parse("19811231", dateTimeFormatter), 2, 2, 2L, false, null, 0, AccountType.B, new FirstName("Jane"), new LastName("Doe"))
         );
         Trailer expectedTrailer = new Trailer("T", 2);
 
